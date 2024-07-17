@@ -23,7 +23,7 @@ function starGame() {
     game.font = elementsSize + 'px verdada';
     game.textAlign='end';
 
-    const map = maps[1];
+    const map = maps[0];
     const mapRows = map.trim().split('\n');
     const mapRowCols = mapRows.map(row => row.trim().split(''));
     console.log(map,mapRows,mapRowCols);
@@ -78,8 +78,6 @@ function starGame() {
 
 
 function setCanvasSize (){
-
-    let canvasSize;
     if (window.innerHeight  > window.innerWidth) {
         canvasSize = window.innerWidth*0.8
     }else {
@@ -114,21 +112,40 @@ function moveByKeys (event){
 
 function moveUp(){
     console.log('Me quiero mover hacia arriba');
-    playerPosition.y -= elementsSize;
-    movePlayer();
+    if ((playerPosition.y - elementsSize)< elementsSize ) {
+        console.log('OUT');
+    }else{
+        playerPosition.y -= elementsSize;
+        starGame();
+    } 
 }
+
 function moveLeft(){
     console.log('Me quiero mover hacia izquierda');
-    playerPosition.x =+ elementsSize;
-    movePlayer();
+    if ((playerPosition.x - elementsSize)< elementsSize ) {
+        console.log('OUT');
+    }else{
+        playerPosition.x -= elementsSize;
+        starGame();
+    } 
 }
+
 function moveRight(){
     console.log('Me quiero mover hacia derecha');
-    playerPosition.x -= elementsSize;
-    movePlayer();
+    if ((playerPosition.x + elementsSize) > canvasSize) {
+        console.log('OUT');
+    }else{
+        playerPosition.x += elementsSize;
+        starGame();
+    } 
 }
+
 function moveDown(){
     console.log('Me quiero mover hacia abajo');
-    playerPosition.y =+ elementsSize;
-    movePlayer();
+    if ((playerPosition.y + elementsSize) > canvasSize) {
+        console.log('OUT');
+    }else{
+        playerPosition.y += elementsSize;
+        starGame();
+    }
 }
