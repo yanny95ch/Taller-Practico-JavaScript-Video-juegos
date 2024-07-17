@@ -7,6 +7,10 @@ const btndown  = document.querySelector('#down');
 
 let canvasSize;
 let elementsSize;
+const playerPosition = {
+    x:undefined,
+    y:undefined,
+}
 
 window.addEventListener('load', setCanvasSize);
 window.addEventListener('resize', setCanvasSize);
@@ -19,7 +23,7 @@ function starGame() {
     game.font = elementsSize + 'px verdada';
     game.textAlign='end';
 
-    const map = maps[0];
+    const map = maps[1];
     const mapRows = map.trim().split('\n');
     const mapRowCols = mapRows.map(row => row.trim().split(''));
     console.log(map,mapRows,mapRowCols);
@@ -33,16 +37,28 @@ function starGame() {
         }  
     }*/
 
+    game.clearRect(0,0,canvasSize,canvasSize);    
     mapRowCols.forEach((row , rowI) => {
         row.forEach((col,colI) => {
              const emoji = emojis[col];
              const posX = elementsSize * (colI + 1);
              const posY = elementsSize * (rowI + 1);
+
+            if (col == 'O') {
+                if(!playerPosition.x && !playerPosition.y){
+                    playerPosition.x = posX;
+                    playerPosition.y = posY
+                    console.log({playerPosition});
+
+                }
+            }
+
              game.fillText(emoji,posX,posY);
         })
     });
 
-     /*
+    movePlayer()
+    /*
      valdar el ancho y alto del cuyadro en el canvas dependiendo del tama;o
     window.innerHeight
     window.innerWidth    
@@ -77,7 +93,11 @@ function setCanvasSize (){
 
     starGame()
 } 
-
+ 
+function movePlayer(){
+    game.fillText(emojis['PLAYER'],playerPosition.x , playerPosition.y)
+     
+}
 
 window.addEventListener('keydown', moveByKeys);
 btnUp.addEventListener('click', moveUp);
@@ -94,13 +114,21 @@ function moveByKeys (event){
 
 function moveUp(){
     console.log('Me quiero mover hacia arriba');
+    playerPosition.y -= elementsSize;
+    movePlayer();
 }
 function moveLeft(){
     console.log('Me quiero mover hacia izquierda');
+    playerPosition.x =+ elementsSize;
+    movePlayer();
 }
 function moveRight(){
     console.log('Me quiero mover hacia derecha');
+    playerPosition.x -= elementsSize;
+    movePlayer();
 }
 function moveDown(){
     console.log('Me quiero mover hacia abajo');
+    playerPosition.y =+ elementsSize;
+    movePlayer();
 }
