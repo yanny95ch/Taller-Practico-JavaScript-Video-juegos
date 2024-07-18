@@ -15,9 +15,25 @@ const giftPosition = {
     x: undefined,
     y: undefined,
 };
+let enemyPositions = [];
 
 window.addEventListener('load', setCanvasSize);
 window.addEventListener('resize', setCanvasSize);
+
+function setCanvasSize (){
+    if (window.innerHeight  > window.innerWidth) {
+        canvasSize = window.innerWidth*0.8
+    }else {
+        canvasSize = window.innerHeight * 0.8;
+    }
+
+    canvas.setAttribute('width', canvasSize );
+    canvas.setAttribute('height', canvasSize);
+
+    elementsSize = canvasSize / 10;
+
+    starGame()
+} 
 
 function starGame() {
     
@@ -27,11 +43,12 @@ function starGame() {
     game.font = elementsSize + 'px verdada';
     game.textAlign='end';
 
-    const map = maps[2];
+    const map = maps[0];
     const mapRows = map.trim().split('\n');
     const mapRowCols = mapRows.map(row => row.trim().split(''));
     console.log(map,mapRows,mapRowCols);
 
+    enemyPositions = [];
     /*
     ----Areglo bidimencional
     for (let row = 1; row <= 10; row++) {
@@ -41,7 +58,9 @@ function starGame() {
         }  
     }*/
 
-    game.clearRect(0,0,canvasSize,canvasSize);    
+    game.clearRect(0,0,canvasSize,canvasSize);  
+    
+    
     mapRowCols.forEach((row , rowI) => {
         row.forEach((col,colI) => {
              const emoji = emojis[col];
@@ -58,8 +77,12 @@ function starGame() {
             } else if(col == 'I'){
                 giftPosition.x = posX;
                 giftPosition.y = posY;
+            }else  if(col == 'X'){
+                enemyPositions.push({
+                    x :posX,
+                    y : posY,
+                });
             }
-
              game.fillText(emoji,posX,posY);
         })
     });
@@ -84,28 +107,26 @@ function starGame() {
 }
 
 
-function setCanvasSize (){
-    if (window.innerHeight  > window.innerWidth) {
-        canvasSize = window.innerWidth*0.8
-    }else {
-        canvasSize = window.innerHeight * 0.8;
-    }
 
-    canvas.setAttribute('width', canvasSize );
-    canvas.setAttribute('height', canvasSize);
-
-    elementsSize = canvasSize / 10;
-
-    starGame()
-} 
  
 function movePlayer(){
-    const giftPositionX = playerPosition.x.toFixed(3) == giftPosition.x.toFixed(3);
-    const giftPositionY = playerPosition.y.toFixed(3) == giftPosition.y.toFixed(3);
-    const giftColosion = giftPositionX && giftPositionY
+    const giftColosionX = playerPosition.x.toFixed(3) == giftPosition.x.toFixed(3);
+    const giftColosionY = playerPosition.y.toFixed(3) == giftPosition.y.toFixed(3);
+    const giftColosion = giftColosionX && giftColosionY
     if (giftColosion) {
         console.log('Subiste de nivel');
     }
+
+    const enemyCollision = enemyPositions.find(enemy => {
+        const enemyCollisionX = enemy.x == playerPosition.x;
+        const enemyCollisionY = enemy.y == playerPosition.y;
+        return enemyCollisionX && enemyCollisionY;
+    } );
+
+    if (enemyCollision) {
+        console.log('Chocaste con un enemigo');
+    }
+
     game.fillText(emojis['PLAYER'],playerPosition.x , playerPosition.y)
      
 }
