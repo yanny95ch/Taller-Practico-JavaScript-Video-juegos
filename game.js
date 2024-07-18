@@ -4,6 +4,7 @@ const btnUp = document.querySelector('#up');
 const btnleft = document.querySelector('#left');
 const btnright = document.querySelector('#right');
 const btndown  = document.querySelector('#down');
+const spanLives = document.querySelector('#lives')
 
 let canvasSize;
 let elementsSize;
@@ -25,9 +26,9 @@ window.addEventListener('resize', setCanvasSize);
 
 function setCanvasSize (){
     if (window.innerHeight  > window.innerWidth) {
-        canvasSize = window.innerWidth*0.8
+        canvasSize = window.innerWidth*0.7
     }else {
-        canvasSize = window.innerHeight * 0.8;
+        canvasSize = window.innerHeight * 0.7;
     }
 
     canvas.setAttribute('width', canvasSize );
@@ -42,6 +43,7 @@ function starGame() {
     
 
     console.log({canvasSize, elementsSize});
+    //console.log(window.innerWidth, window.innerHeight);
 
     game.font = elementsSize + 'px verdada';
     game.textAlign='end';
@@ -56,6 +58,9 @@ function starGame() {
     const mapRows = map.trim().split('\n');
     const mapRowCols = mapRows.map(row => row.trim().split(''));
     console.log(map,mapRows,mapRowCols);
+
+      
+    showLives();
 
     enemyPositions = [];
     /*
@@ -131,7 +136,7 @@ function movePlayer(){
     } );
 
     if (enemyCollision) {
-        leveFail();
+        levelFail();
     };
 
     game.fillText(emojis['PLAYER'],playerPosition.x , playerPosition.y)
@@ -143,13 +148,13 @@ function levelWin(){
     level++;
     starGame();
 }
-function leveFail(){
+function levelFail(){
     console.log('Chocaste con un enemigo');
     lives -- ;
 
     if(lives <= 0){
-        level= 0;
-        lives=3;
+        level = 0;
+        lives = 3;
     }
     playerPosition.x = undefined;
     playerPosition.y = undefined;
@@ -161,6 +166,13 @@ function gameWin(){
     console.log('Terminaste el Juego');
 }
 
+function showLives(){
+   const heartArray = Array(lives).fill(emojis['HEART']) ;// [0,1,2]
+   //console.log(heartArray);
+   spanLives.innerHTML = "";
+
+   heartArray.forEach(heart => spanLives.append(heart));
+}
 window.addEventListener('keydown', moveByKeys);
 btnUp.addEventListener('click', moveUp);
 btnleft.addEventListener('click', moveLeft);
