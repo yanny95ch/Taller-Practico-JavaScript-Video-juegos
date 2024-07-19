@@ -6,6 +6,8 @@ const btnright = document.querySelector('#right');
 const btndown  = document.querySelector('#down');
 const spanLives = document.querySelector('#lives')
 const spanTime = document.querySelector('#time')
+const spanRecord =  document.querySelector('#record');
+const pResult = document.querySelector('#result')
 
 let canvasSize;
 let elementsSize;
@@ -36,6 +38,8 @@ function setCanvasSize (){
         canvasSize = window.innerHeight * 0.7;
     }
 
+    canvasSize = canvasSize.toFixed(1);
+
     canvas.setAttribute('width', canvasSize );
     canvas.setAttribute('height', canvasSize);
 
@@ -50,7 +54,7 @@ function starGame() {
     console.log({canvasSize, elementsSize});
     //console.log(window.innerWidth, window.innerHeight);
 
-    game.font = elementsSize + 'px verdada';
+    game.font = elementsSize + 'px verdana'; 
     game.textAlign='end';
 
     const map = maps[level];
@@ -63,11 +67,12 @@ function starGame() {
     if (!timeStar) {
         timeStar= Date.now();
         timeInterval = setInterval(showTime, 100)
+        showRecord();
     }
     
     const mapRows = map.trim().split('\n');
     const mapRowCols = mapRows.map(row => row.trim().split(''));
-    console.log(map,mapRows,mapRowCols);
+    console.log({map,mapRows,mapRowCols});
 
       
     showLives();
@@ -140,8 +145,8 @@ function movePlayer(){
     }
 
     const enemyCollision = enemyPositions.find(enemy => {
-        const enemyCollisionX = enemy.x == playerPosition.x.toFixed(3) ;
-        const enemyCollisionY = enemy.y == playerPosition.y.toFixed(3) ;
+        const enemyCollisionX = enemy.x.toFixed(3)== playerPosition.x.toFixed(3) ;
+        const enemyCollisionY = enemy.y.toFixed(3) == playerPosition.y.toFixed(3) ;
         return enemyCollisionX && enemyCollisionY;
     } );
 
@@ -173,10 +178,27 @@ function levelFail(){
 
 }
 
-function gameWin(){
-    console.log('Terminaste el Juego');
+function gameWin() {
+    console.log('¡Terminaste el juego!');
     clearInterval(timeInterval);
-}
+  
+    const recordTime = localStorage.getItem('record_time');
+    const playerTime = Date.now() - timeStar;
+  
+    if (recordTime) {
+      if (recordTime >= playerTime) {
+        localStorage.setItem('record_time', playerTime);
+        pResult.innerHTML = 'SUPERASTE EL RECORD :)';
+      } else {
+        pResult.innerHTML = 'lo siento, no superaste el records :(';
+      }
+    } else {
+      localStorage.setItem('record_time', playerTime);
+      pResult.innerHTML = 'Primera vez? Muy bien, pero ahora trata de superar tu tiempo :)';
+    }
+  
+    console.log({recordTime, playerTime});
+  }
 
 function showLives(){
    const heartArray = Array(lives).fill(emojis['HEART']) ;// [0,1,2]
@@ -190,6 +212,9 @@ function showTime(){
     spanTime.innerHTML = Date.now() - timeStar;
 }
 
+function showRecord(){
+    spanRecord.innerHTML = localStorage.getItem('record_time')
+}
 window.addEventListener('keydown', moveByKeys);
 btnUp.addEventListener('click', moveUp);
 btnleft.addEventListener('click', moveLeft);
